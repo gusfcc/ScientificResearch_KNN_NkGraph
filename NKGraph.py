@@ -27,10 +27,11 @@ class NKGraph:
     #########################################
     
     def readDataSet(self):
-        df = pd.read_table("DataSets/" + str(self.name) + ".dat", sep = ' ', header = None, skiprows = 4, index_col = False)
+        df = pd.read_table("DataSets/" + str(self.name) + ".dat", sep = '\s+', header = None, skiprows = 4, index_col = False)
         df.name = self.name
         
         self.dt = df.iloc[:,:len(df.columns)-1].copy() #Data
+        #self.dt = (self.dt - self.dt.min()) / (self.dt.max() - self.dt.min())
         self.dt.name = self.name
         self.dtl = df.iloc[:,len(df.columns)-1].copy() #Label
     
@@ -186,7 +187,7 @@ class NKGraph:
     
     #########################################
     
-    def nkAclassifier(self, x, K,  dt, dtl, nkgraph, createFiles = True, fPath = ''):
+    def nkAclassifier(self, x, K, alpha, dt, dtl, nkgraph, createFiles = True, fPath = ''):
         vx = cdist(np.array([x]), dt.to_numpy(), 'sqeuclidean').argmin()
         
         vxAdj = list(nkgraph.adj[dt.iloc[vx].name].keys())
@@ -197,7 +198,7 @@ class NKGraph:
         
         if(createFiles is True):
         
-            FName = fPath + '/' + self.name + '_' + str(K) + "_nkA.txt"
+            FName = fPath + '/' + self.name + '_' + str(K) + '_' + str((int)(alpha*K)) + "_nkA.txt"
             file = open(FName,"a")    
             
             file.write("x index       : " + str(x.name) + "\n")
@@ -219,7 +220,7 @@ class NKGraph:
     
     #########################################
     
-    def nkBclassifier(self, x, K, dt, dtl, nkgraph, createFiles = True, fPath = ''):
+    def nkBclassifier(self, x, K, alpha, dt, dtl, nkgraph, createFiles = True, fPath = ''):
         neighLabels = cdist(np.array([x]), dt.to_numpy(), 'sqeuclidean').argsort()[0]
         neighborsX = np.array(dt.iloc[neighLabels].index)    
         vx = neighborsX[0]    
@@ -243,7 +244,7 @@ class NKGraph:
         
         if(createFiles is True):
         
-            FName = fPath + '/' + self.name + '_' + str(K) + "_nkB.txt"
+            FName = fPath + '/' + self.name + '_' + str(K) + '_' + str((int)(alpha*K)) + "_nkB.txt"
             file = open(FName,"a")     
             
             file.write("x index       : " + str(x.name) + "\n")
@@ -271,7 +272,7 @@ class NKGraph:
         all = 0
         
         if(createFiles is True):
-            FName = fPath + '/' + self.name + '_' + str(K) + "_nk" + str(type).upper() + ".txt"
+            FName = fPath + '/' + self.name + '_' + str(K) + '_' + str((int)(alpha*K)) + "_nk" + str(type).upper() + ".txt"
             file = open(FName,"w").close()
         
         dtl_pred = np.zeros(np.size(self.dtl))
@@ -287,15 +288,15 @@ class NKGraph:
                         
             for i in test:
                 if type == 'a':                
-                    dtl_pred[i] = self.nkAclassifier(self.dt.loc[i], K, tDt, self.dtl, tG, createFiles = createFiles, fPath = fPath)
+                    dtl_pred[i] = self.nkAclassifier(self.dt.loc[i], K, alpha, tDt, self.dtl, tG, createFiles = createFiles, fPath = fPath)
                 elif type == 'b':            
-                    dtl_pred[i] = self.nkBclassifier(self.dt.loc[i], K, tDt, self.dtl, tG, createFiles = createFiles, fPath = fPath)
+                    dtl_pred[i] = self.nkBclassifier(self.dt.loc[i], K, alpha, tDt, self.dtl, tG, createFiles = createFiles, fPath = fPath)
                 else: return 0
                             
         confM = CM(self.dtl, dtl_pred)  
         
         if(createFiles is True):
-            FName = fPath + '/' + self.name + '_' + str(K) + "_nk" + str(type).upper() + ".txt"
+            FName = fPath + '/' + self.name + '_' + str(K) + '_' + str((int)(alpha*K)) + "_nk" + str(type).upper() + ".txt"
             file = open(FName,"a")
             file.write("\n")
             file.write(str(confM))
