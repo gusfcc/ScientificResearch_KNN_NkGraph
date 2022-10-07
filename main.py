@@ -17,13 +17,14 @@ import random as rng
 from NKGraph import NKGraph 
 
 def main():
-    Ki = 10
-    Kf = 10
-    Ai = 0
-    Af = 9
-    p = 10
+    Ki = 1  #Start K parameter [01]
+    Kf = 10 #Final K parameter [10]
+    Ai = 0  #Start alpha parameter [00]
+    Af = 9  #Final alpha parameter [09]
+    p = 10  #crosval p-fold [10]
+    DSFolder = "Datasets" #Datasets folder [Datasets]
+    createFiles = False #If all the steps on the creation of the graphs will be printed out [False]
     
-    createFiles = True
     
     pd.set_option('display.max_rows', 10)
 
@@ -31,7 +32,7 @@ def main():
         
     
     resultsF = open("Results.txt", "w").close()
-    for file in os.scandir("DataSets2"):        
+    for file in os.scandir(DSFolder):        
         resultsF = open("Results.txt", "a")
         fFullPath = file.path
         fPath = os.path.splitext(fFullPath)[0]
