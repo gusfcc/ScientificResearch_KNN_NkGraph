@@ -19,8 +19,11 @@ from NKGraph import NKGraph
 def main():
     Ki = 1  #Start K parameter [01]
     Kf = 10 #Final K parameter [10]
-    Ai = 0  #Start alpha parameter [00]
-    Af = 9  #Final alpha parameter [09]
+        #K is the number of neighbors, and the number of edges
+    Ai = 1  #Start A parameter [1]
+    Af = 1  #Final A parameter [1]
+        #A is the number of edges defined by density
+        #If Ai != Af, then Ki == Kf
     p = 10  #crosval p-fold [10]
     DSFolder = "Datasets" #Datasets folder [Datasets]
     createFiles = False #If all the steps on the creation of the graphs will be printed out [False]
