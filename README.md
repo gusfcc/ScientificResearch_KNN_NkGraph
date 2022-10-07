@@ -39,6 +39,7 @@ Running the code:
     createFiles - If all the steps of the creation of the graphs will be printed out [False]
     
     
-    At last, run *main.py*. The results will be printed in *Results.txt*
+    
+At last, run *main.py*. The results will be printed in *Results.txt*
    
 
